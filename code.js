@@ -226,22 +226,18 @@ function buildHTML(imgPath, title, hotspots, prev, next, homeHref) {
 .hs{position:absolute;display:block;background:transparent;cursor:pointer;z-index:2;}
 .pulse{position:absolute;background:#ffe;opacity:0.5;animation:fade 0.8s ease-out;z-index:1;}
 .bar{position:absolute;bottom:0;width:100vw;color:#fff;}
-.bar-main{min-height:72px;background:#1c1c1e;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;font-size:14px;border-top-left-radius:12px;border-top-right-radius:12px;gap:20px;box-shadow:0 -2px 6px rgba(0,0,0,0.4);}
-.bar-handle{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:48px;height:16px;background:#1c1c1e;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 -2px 6px rgba(0,0,0,0.4);}
-.bar-handle svg{transition:transform 0.2s;color:#fff;}
+.bar-main{height:56px;background:#2a2a2a;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:13px;}
+.bar-handle{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:40px;height:12px;background:#2a2a2a;border-radius:4px 4px 0 0;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.bar-handle span{transition:transform 0.2s;color:#fff;font-size:12px;}
 .bar-hidden .bar-main{display:none;}
-.bar-hidden .bar-handle svg{transform:rotate(180deg);}
+.bar-hidden .bar-handle span{transform:rotate(180deg);}
 .bar .home img,.bar .arrows{filter:invert(19%) sepia(92%) saturate(6550%) hue-rotate(-10deg);height:18px;}
 @keyframes fade {0%{opacity:0.7;}100%{opacity:0;}}</style></head>
 <body>
 <div id="c"><img id="im" src="${imgPath}"/></div>
 ${hsDivs}
 <div id="bar" class="bar">
-  <div class="bar-handle" onclick="toggleBar()">
-    <svg id="toggle-arrow" width="12" height="8" viewBox="0 0 12 8">
-      <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
+  <div class="bar-handle" onclick="toggleBar()"><span id="toggle-arrow">▼</span></div>
   <div id="bar-main" class="bar-main">
     <a class="home" href="${homeHref}"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png"/></a>
     <button onclick="flashHotspots()" style="background:none;border:1px solid #fff;border-radius:16px;padding:4px 12px;color:#fff;">
@@ -251,10 +247,9 @@ ${hsDivs}
 </div>
 <script>
 var im=document.getElementById("im");
-var BAR_HEIGHT=72;
-var barShown=true;var container=document.getElementById("c");
+var barVisible=true;var container=document.getElementById("c");
 function resizeContent(){
-  var vh=window.innerHeight-(barShown?BAR_HEIGHT:0),vw=window.innerWidth,
+  var vh=window.innerHeight-(barVisible?56:0),vw=window.innerWidth,
   r=Math.min(vw/im.naturalWidth,vh/im.naturalHeight),imgW=im.naturalWidth*r,imgH=im.naturalHeight*r;
   im.style.width=imgW+"px";im.style.height=imgH+"px";
   var offsetX=(vw-imgW)/2,offsetY=(vh-imgH)/2,hs=document.getElementsByClassName("hs");
@@ -269,8 +264,8 @@ function resizeContent(){
 }
 im.onload=resizeContent;window.onresize=resizeContent;
 function toggleBar(){
-  barShown=!barShown;
-  document.body.classList.toggle('bar-hidden',!barShown);
+  barVisible=!barVisible;
+  document.body.classList.toggle('bar-hidden',!barVisible);
   resizeContent();
 }
 function flashHotspots(){
