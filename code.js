@@ -251,9 +251,9 @@ ${hsDivs}
 </div>
 <script>
 var im=document.getElementById("im");
-var barVisible=true;var container=document.getElementById("c");
+var barShown=true;var container=document.getElementById("c");
 function resizeContent(){
-  var vh=window.innerHeight-(barVisible?72:0),vw=window.innerWidth,
+  var vh=window.innerHeight-(barShown?72:0),vw=window.innerWidth,
   r=Math.min(vw/im.naturalWidth,vh/im.naturalHeight),imgW=im.naturalWidth*r,imgH=im.naturalHeight*r;
   im.style.width=imgW+"px";im.style.height=imgH+"px";
   var offsetX=(vw-imgW)/2,offsetY=(vh-imgH)/2,hs=document.getElementsByClassName("hs");
@@ -268,8 +268,8 @@ function resizeContent(){
 }
 im.onload=resizeContent;window.onresize=resizeContent;
 function toggleBar(){
-  barVisible=!barVisible;
-  document.body.classList.toggle('bar-hidden',!barVisible);
+  barShown=!barShown;
+  document.body.classList.toggle('bar-hidden',!barShown);
   resizeContent();
 }
 function flashHotspots(){
