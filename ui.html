@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>ProtoFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      height: 100%;
+      font-family: 'Manrope', sans-serif;
+      background: #111;
+      color: white;
+      padding: 0;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+
+    main {
+      padding: 24px 24px 64px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; 
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    h2 {
+      font-size: 13px;
+      color: #aaa;
+      text-align: center;
+      font-weight: 400;
+      margin-bottom: 24px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin: 0;
+      padding: 0;
+      border-bottom: 1px solid #333;
+    }
+    .tab {
+      font-size: 13px;
+      padding: 8px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-color: #e60000;
+    }
+    .tab-content {
+      display: none;
+      flex: 1 1 auto;
+      flex-direction: column;
+      margin-top: 0 !important;
+      padding-top: 12px !important;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    #frame-count {
+      font-size: 64px;
+      font-weight: 800;
+      text-align: center;
+      color: #666;
+      margin-bottom: 0;
+    }
+    #frame-count.active {
+      color: #e60000;
+    }
+    #frame-label {
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 24px;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    label {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 6px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    #export-btn {
+      width: 100%;
+      background: #e60000;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      padding: 14px;
+      border-radius: 32px;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+    #export-btn:disabled {
+      background: #333;
+      color: #555;
+      cursor: not-allowed;
+    }
+    .hint {
+      text-align: center;
+      font-size: 12px;
+      color: #f77;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .error-panel {
+      background: #1c1c1c;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 12px;
+    }
+    .error-toggle {
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        color: #ffc107;
+      }
+    .error-list {
+      display: none;
+      margin-top: 10px;
+    }
+    .error-item {
+      font-size: 12px;
+      margin: 4px 0;
+    }
+    .error-item.error { color: #ffc107; }
+    .error-item.warn { color: #ffc107; }
+    footer {
+      font-size: 11px;
+      color: #777;
+      text-align: center;
+      margin-top: auto;
+      padding-top: 16px o;
+      padding-bottom: 12px;
+    }
+    footer img {
+      display: block;
+      margin: 8px auto 0;
+      height: 20px;
+    }
+    .progress-wrapper {
+      width: 100%;
+      background: #222;
+      height: 12px;
+      border-radius: 6px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #e63946;
+      width: 0%;
+      transition: width 0.2s ease-in-out;
+    }
+    .progress-label {
+      display: block;
+      font-size: 11px;
+      color: #999;
+      text-align: right;
+      margin-top: 4px;
+    }
+    .accordion {
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.6;
+  flex: 1;
+    }
+
+    .accordion-item {
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .accordion-header {
+      padding: 12px 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .accordion-body {
+      display: none;
+      padding: 4px 0 12px 0;
+    }
+
+    .accordion-item.open .accordion-header {
+      color: #e60000;
+    }
+
+    .accordion-item.open .accordion-body {
+      color:white;
+      display: block;
+    }
+
+    .accordion-item .arrow {
+      transition: transform 0.2s ease;
+    }
+
+    .accordion-item.open .arrow {
+      transform: rotate(90deg);
+    }
+    .error-arrow {
+      font-size: 16px;
+      color: #ffc107;
+      transition: transform 0.2s ease;
+      transform: rotate(180deg);
+      margin-left: 8px;
+    }
+
+    .error-toggle.open .error-arrow {
+      transform: rotate(270deg);
+    }
+    .error-item.warn {
+      color: #3399ff;
+    } 
+
+  </style>
+</head>
+<body>
+  <main>
+    <div class="tabs">
+      <div class="tab active" data-tab="main">Esporta</div>
+      <div class="tab" data-tab="instructions">Istruzioni</div>
+  </div>
+
+    <div id="main" class="tab-content active">
+      <div id="frame-count">0</div>
+      <div id="frame-label">frame selezionati</div>
+      <div class="input-group">
+        <label for="start-frame">Frame iniziale</label>
+        <select id="start-frame" style="width: 100%; padding: 10px; background: #222; color: white; border-radius: 8px;"></select>
+      </div>
+
+      <!-- PANEL ERROR -->
+      <div class="error-panel" id="error-panel" style="display: none;">
+        <div class="error-toggle" onclick="toggleErrors()">
+          <div>⚠️ <span id="error-count">0</span> errori</div>
+          <div class="error-arrow">‹</div>
+        </div>
+        <div class="error-list" id="error-list"></div>
+      </div>
+
+      <!-- PANEL WARNING -->
+      <div class="error-panel" id="warning-panel" style="display: none;">
+        <div class="error-toggle" onclick="toggleWarnings()" style="color: #3399ff;">
+          <div>ℹ️ <span id="warning-count">0</span> segnalazioni</div>
+          <div class="error-arrow" style="color: #3399ff;">‹</div>
+        </div>
+        <div class="error-list" id="warning-list"></div>
+      </div>
+
+
+      <div class="input-group">
+        <label for="filename">Nome del file (facoltativo)</label>
+        <input id="filename" type="text" placeholder="es: prototipo-flusso" />
+      </div>
+
+     <div style="margin-bottom: 4px;">
+       <button id="export-btn" disabled>Scarica prototipo</button>
+     </div>
+     <div class="progress-wrapper" id="progress-wrapper"> 
+       <div id="progress-bar" class="progress-bar"></div>
+     </div>
+
+      <div class="hint" id="download-hint">❗ Risolvi gli errori per continuare.</div>
+    </div>
+
+    <div id="instructions" class="tab-content">
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <div class="accordion-header">Come usare il plugin <span class="arrow">▶</span></div>
+      <div class="accordion-body">
+        <p>Seleziona uno o più frame da Figma, poi clicca sul pulsante "Scarica prototipo".</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">Come leggere gli errori <span class="arrow">▶</span></div>
+      <div class="accordion-body">
+        <p><b style="color: #ffc107;">Errori gialli</b>: sono bloccanti. Impediscono il download del prototipo. Sono causati da azioni non compatibili (es: <code>Open Overlay</code>, <code>Back</code>). Tutti i frame devono avere azione "Navigate to" e transizione "Instant".</p>
+        <p><b style="color: #3399ff;">Errori blu</b>: sono warning. Puoi comunque esportare. Appaiono se un frame è collegato a un altro non selezionato.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">Come usare il prototipo <span class="arrow">▶</span></div>
+      <div class="accordion-body">
+        <p>Nel file ZIP trovi:</p>
+        <ul>
+          <li><b>start.html</b> – Il file da cui inizia il prototipo. Lo scegli nel plugin.</li>
+          <li><b>README.txt</b> – Un file di testo con istruzioni e avvertenze.</li>
+          <li><b>screens/</b> – Una cartella con tutti i PNG e HTML generati, ordinati per nome.</li>
+        </ul>
+        <p>Puoi aprire <b>start.html</b> per iniziare il test, oppure entrare nella cartella <code>screens</code> per navigare tra le schermate.</p>
+        <p>⚠️ <b>Non modificare i nomi dei file o delle cartelle</b>: i collegamenti HTML si basano su quei nomi.</p>
+      </div>
+
+
+
+    <div class="accordion-item">
+      <div class="accordion-header">A cosa serve <span class="arrow">▶</span></div>
+      <div class="accordion-body">
+        <p>Per creare prototipi offline da usare su dispositivi embedded, per test di usabilità o demo senza accesso a Figma.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+  </main>
+
+  <footer style="text-align: center; font-size: 13px; color: #777; padding-top: 32px;">
+    <span style="display: inline-flex; align-items: center; gap: 8px;">
+      Plugin creato con ❤️ da
+      <img src="data:image/png;base64,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" 
+           alt="Havas logo"
+           style="height: 60px; object-fit: contain; position: relative; top: -4px;" />
+    </span>
+    </footer>
+
+<script>
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      contents.forEach(c => c.classList.remove("active"));
+      tab.classList.add("active");
+      const targetTab = document.getElementById(tab.dataset.tab);
+      if (targetTab) targetTab.classList.add("active");
+    });
+  });
+
+  window.onmessage = (event) => {
+    const msg = event.data.pluginMessage;
+    if (!msg) return;
+
+    if (msg.type === 'selection-info') {
+      const countEl = document.getElementById("frame-count");
+      const startFrameSelect = document.getElementById("start-frame");
+      startFrameSelect.innerHTML = "";
+
+      if (msg.frames && msg.frames.length > 0) {
+        msg.frames.forEach((frame, index) => {
+          const option = document.createElement("option");
+          option.value = frame.id;
+          option.textContent = frame.name || `Frame ${index + 1}`;
+          startFrameSelect.appendChild(option);
+        });
+        startFrameSelect.value = msg.frames[0].id;
+      }
+
+      countEl.textContent = msg.framesCount;
+      countEl.classList.toggle("active", msg.framesCount > 0);
+      document.getElementById("frame-label").textContent = msg.framesCount === 1 ? "frame selezionato" : "frame selezionati";
+      document.getElementById("export-btn").disabled = msg.framesCount === 0;
+
+      const errors = msg.warnings.filter(w => w.level === 'error');
+      const warnings = msg.warnings.filter(w => w.level === 'warn');
+
+      document.getElementById("error-panel").style.display = errors.length > 0 ? "block" : "none";
+      document.getElementById("error-list").innerHTML = errors.map(w =>
+        `<div class="error-item error">[ERRORE] ${w.frame}: ${w.action}</div>`
+      ).join('');
+      document.getElementById("error-count").textContent = errors.length;
+
+      if (warnings.length > 0) {
+        document.getElementById("warning-panel").style.display = "block";
+        const grouped = {};
+        warnings.forEach(w => {
+          if (!grouped[w.frame]) grouped[w.frame] = { nonSelezionati: 0, vuoti: 0 };
+          if (w.action === 'Collegamento a frame non selezionato') grouped[w.frame].nonSelezionati++;
+          else if (w.action === 'Collegamento vuoto') grouped[w.frame].vuoti++;
+        });
+
+        const summary = Object.entries(grouped).map(([frame, counts]) => {
+          const lines = [];
+          if (counts.nonSelezionati > 0) lines.push(`- ${counts.nonSelezionati} collegamenti a frame non selezionati`);
+          if (counts.vuoti > 0) lines.push(`- ${counts.vuoti} collegamenti vuoti`);
+          return `<div class="error-item warn">[SEGNALAZIONE] ${frame}<br>${lines.join('<br>')}</div>`;
+        });
+
+        document.getElementById("warning-list").innerHTML = summary.join('');
+        document.getElementById("warning-count").textContent = warnings.length;
+      } else {
+        document.getElementById("warning-panel").style.display = "none";
+        document.getElementById("warning-list").innerHTML = '';
+        document.getElementById("warning-count").textContent = '0';
+      }
+    }
+
+    if (msg.type === 'progress') {
+      document.getElementById("progress-wrapper").style.display = "block";
+      const perc = Math.round((msg.current / msg.total) * 100);
+      document.getElementById("progress-bar").style.width = perc + "%";
+    }
+
+    if (msg.type === 'zip-data') {
+      const zip = new JSZip();
+      msg.frames.forEach(frame => {
+        zip.file(frame.name + ".png", frame.bytes, { base64: true });
+      });
+      msg.htmls.forEach(page => {
+        zip.file(page.name, page.content);
+      });
+      zip.generateAsync({ type: "blob" }).then(blob => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = msg.zipName + ".zip";
+        a.click();
+        document.getElementById("progress-wrapper").style.display = "none";
+        document.getElementById("progress-bar").style.width = "0%";
+      });
+    }
+  };
+
+  function toggleErrors() {
+    const list = document.getElementById("error-list");
+    const toggle = document.querySelector(".error-toggle");
+    const isOpen = list.style.display === "block";
+    list.style.display = isOpen ? "none" : "block";
+    toggle.classList.toggle("open", !isOpen);
+  }
+
+  function toggleWarnings() {
+    const list = document.getElementById("warning-list");
+    const toggle = document.querySelector("#warning-panel .error-toggle");
+    const isOpen = list.style.display === "block";
+    list.style.display = isOpen ? "none" : "block";
+    toggle.classList.toggle("open", !isOpen);
+  }
+
+  document.getElementById("export-btn").addEventListener("click", () => {
+    const name = document.getElementById("filename").value;
+    const startFrameId = document.getElementById("start-frame").value;
+    parent.postMessage({
+      pluginMessage: {
+        type: 'proceed-export',
+        name: name,
+        selectedHomeId: startFrameId
+      }
+    }, '*');
+  });
+
+  parent.postMessage({ pluginMessage: { type: 'get-selection' } }, '*');
+
+  document.querySelectorAll(".accordion-header").forEach(header => {
+    header.addEventListener("click", () => {
+      const item = header.parentElement;
+      document.querySelectorAll(".accordion-item").forEach(i => {
+        if (i !== item) i.classList.remove("open");
+      });
+      item.classList.toggle("open");
+    });
+  });
+</script>
+
+</body>
+</html>

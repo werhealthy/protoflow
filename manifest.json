@@ -1,0 +1,13 @@
+{
+  "name": "ProtoFlow – Static Proto Export",
+  "id": "protoflow-static-export",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "id": "1512506728008597572",
+  "documentAccess": "dynamic-page",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["https://cdnjs.cloudflare.com"]
+  }
+}
