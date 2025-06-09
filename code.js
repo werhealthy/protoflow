@@ -221,45 +221,68 @@ function buildHTML(imgPath, title, hotspots, prev, next, homeHref) {
   return `
 <!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
 <style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100vw;height:100vh;background:#000;font-family:sans-serif;color:#fff;overflow:hidden;}
-#c{position:absolute;top:0;left:0;display:flex;justify-content:center;align-items:center;width:100vw;height:calc(100vh - 56px);}
+#c{position:absolute;top:0;left:0;display:flex;justify-content:center;align-items:center;width:100vw;height:calc(100vh - 72px);}
 #c img{object-fit:contain;max-width:100%;max-height:100%;}
 .hs{position:absolute;display:block;background:transparent;cursor:pointer;z-index:2;}
 .pulse{position:absolute;background:#ffe;opacity:0.5;animation:fade 0.8s ease-out;z-index:1;}
-.bar{position:absolute;bottom:0;height:56px;width:100vw;background:#2a2a2a;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:13px;}
+.bar{position:absolute;bottom:0;width:100vw;color:#fff;}
+.bar-main{min-height:72px;background:#1c1c1e;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;font-size:14px;border-top-left-radius:12px;border-top-right-radius:12px;gap:20px;box-shadow:0 -2px 6px rgba(0,0,0,0.4);}
+.bar-handle{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:48px;height:16px;background:#1c1c1e;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 -2px 6px rgba(0,0,0,0.4);}
+.bar-handle svg{transition:transform 0.2s;color:#fff;}
+.bar-hidden .bar-main{display:none;}
+.bar-hidden .bar-handle svg{transform:rotate(180deg);}
 .bar .home img,.bar .arrows{filter:invert(19%) sepia(92%) saturate(6550%) hue-rotate(-10deg);height:18px;}
 @keyframes fade {0%{opacity:0.7;}100%{opacity:0;}}</style></head>
 <body>
 <div id="c"><img id="im" src="${imgPath}"/></div>
 ${hsDivs}
-<div class="bar">
-<a class="home" href="${homeHref}"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png"/></a>
-<button onclick="flashHotspots()" style="background:none;border:1px solid #fff;border-radius:16px;padding:4px 12px;color:#fff;">
-${count} ${word1} ${word2}</button>
-<div class="arrows"><a href="${prev}">◀</a> <a href="${next}">▶</a></div>
+<div id="bar" class="bar">
+  <div class="bar-handle" onclick="toggleBar()">
+    <svg id="toggle-arrow" width="12" height="8" viewBox="0 0 12 8">
+      <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div id="bar-main" class="bar-main">
+    <a class="home" href="${homeHref}"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png"/></a>
+    <button onclick="flashHotspots()" style="background:none;border:1px solid #fff;border-radius:16px;padding:4px 12px;color:#fff;">
+    ${count} ${word1} ${word2}</button>
+    <div class="arrows"><a href="${prev}">◀</a> <a href="${next}">▶</a></div>
+  </div>
 </div>
 <script>
 var im=document.getElementById("im");
-im.onload=function(){
-var vw=window.innerWidth,vh=window.innerHeight-56,r=Math.min(vw/im.naturalWidth,vh/im.naturalHeight),
-imgW=im.naturalWidth*r,imgH=im.naturalHeight*r;
-im.style.width=imgW+"px";im.style.height=imgH+"px";
-var offsetX=(vw-imgW)/2,offsetY=(vh-imgH)/2,hs=document.getElementsByClassName("hs");
-for(var i=0;i<hs.length;i++){
-var d=hs[i];
-d.style.left=parseFloat(d.dataset.x)*r+offsetX+"px";
-d.style.top=parseFloat(d.dataset.y)*r+offsetY+"px";
-d.style.width=parseFloat(d.dataset.w)*r+"px";
-d.style.height=parseFloat(d.dataset.h)*r+"px";}
-};
+var barVisible=true;var container=document.getElementById("c");
+function resizeContent(){
+  var vh=window.innerHeight-(barVisible?72:0),vw=window.innerWidth,
+  r=Math.min(vw/im.naturalWidth,vh/im.naturalHeight),imgW=im.naturalWidth*r,imgH=im.naturalHeight*r;
+  im.style.width=imgW+"px";im.style.height=imgH+"px";
+  var offsetX=(vw-imgW)/2,offsetY=(vh-imgH)/2,hs=document.getElementsByClassName("hs");
+  for(var i=0;i<hs.length;i++){
+    var d=hs[i];
+    d.style.left=parseFloat(d.dataset.x)*r+offsetX+"px";
+    d.style.top=parseFloat(d.dataset.y)*r+offsetY+"px";
+    d.style.width=parseFloat(d.dataset.w)*r+"px";
+    d.style.height=parseFloat(d.dataset.h)*r+"px";
+  }
+  container.style.height=vh+"px";
+}
+im.onload=resizeContent;window.onresize=resizeContent;
+function toggleBar(){
+  barVisible=!barVisible;
+  document.body.classList.toggle('bar-hidden',!barVisible);
+  resizeContent();
+}
 function flashHotspots(){
-var hs=document.getElementsByClassName("hs");
-for(var i=0;i<hs.length;i++){
-var d=hs[i];
-var p=document.createElement("div");
-p.className="pulse";
-p.style.left=d.style.left;p.style.top=d.style.top;
-p.style.width=d.style.width;p.style.height=d.style.height;
-document.body.appendChild(p);
-setTimeout(function(e){return function(){document.body.removeChild(e)}}(p),800);}}
+  var hs=document.getElementsByClassName("hs");
+  for(var i=0;i<hs.length;i++){
+    var d=hs[i];
+    var p=document.createElement("div");
+    p.className="pulse";
+    p.style.left=d.style.left;p.style.top=d.style.top;
+    p.style.width=d.style.width;p.style.height=d.style.height;
+    document.body.appendChild(p);
+    setTimeout(function(e){return function(){document.body.removeChild(e)}}(p),800);
+  }
+}
 </script></body></html>`;
 }
