@@ -7,8 +7,8 @@ declare const __html__: string;
 type Reaction = { action: { type: string; destinationId?: string } };
 
 figma.showUI(__html__, { width: 400, height: 590 });
-const HAVAS_LOGO =
-"iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAMkElE" +
+
+const HAVAS_LOGO = "data:image/png;base64," + "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAMkElE" +
 "QVR4nO2deaxdRR3HP+ctUGgKlO3JpiBtkUUKaJAl0iK0RgVFAogRAYUQNATQEGQpyz+CMZAQCRFDqBgJ" +
 "hSKLViUaJcgapdjayhassrWItNUu993eM3PO+MeZufd3pnPue+J7wTjzTSbvvXvnzJmZ32d+v9/MOU0z" +
 "YwxJ8Wrgve5A0nurBEDkSgBErgRA5EoARK4EQORKAESuBEDkSgBErgRA5EoARK4EQORKAESuBEDkSgBE" +
@@ -280,14 +280,17 @@ function buildHTML(
       .hs { position: absolute; display: block; background: transparent; cursor: pointer; z-index: 2; }
       .pulse { position: absolute; background: #ffe; opacity: 0.5; animation: fade 0.8s ease-out; z-index: 1; }
       .bar { position: absolute; bottom: 0; width: 100vw; color: #fff; }
-      .bar-main { min-height: 72px; background: #1c1c1e; display: flex; align-items: center; padding: 16px 24px; font-size: 14px; border-top-left-radius: 12px; border-top-right-radius: 12px; gap: 16px; box-shadow: 0 -2px 6px rgba(0,0,0,0.4); }
-      .bar-handle { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 48px; height: 20px; background: #1c1c1e; border-radius: 8px 8px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 4px; cursor: pointer; box-shadow: 0 -2px 6px rgba(0,0,0,0.4); }
+      .bar-main { min-height: 72px; background: #1c1c1e; display: flex; align-items: center; justify-content: center; padding: 16px 24px; font-size: 14px; border-top-left-radius: 12px; border-top-right-radius: 12px; gap: 20px; box-shadow: 0 -2px 6px rgba(0,0,0,0.4); position: relative; }
+      .bar-handle { position: absolute; top: -24px; left: 50%; transform: translateX(-50%); width: 48px; height: 24px; background: #1c1c1e; border-radius: 8px 8px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; cursor: pointer; box-shadow: 0 -2px 6px rgba(0,0,0,0.4); }
       .bar-handle svg { transition: transform 0.2s; color: #fff; }
       .bar-hidden .bar-main { display: none; }
       .bar-hidden .bar-handle svg { transform: rotate(180deg); }
       .bar .home img { filter: invert(1); height: 18px; }
-      .nav-link { color: #fff; text-decoration: none; font-size: 18px; }
-      .made-by { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: 12px; color: #fff; }
+      .nav-link { color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; }
+      .nav-link svg { transition: transform 0.2s; }
+      .nav-link.prev svg { transform: rotate(90deg); }
+      .nav-link.next svg { transform: rotate(-90deg); }
+      .made-by { position: absolute; right: 24px; display: flex; align-items: center; gap: 4px; font-size: 12px; color: #fff; }
       .made-by img { height: 18px; filter: invert(1); }
       @keyframes fade { 0% { opacity: 0.7; } 100% { opacity: 0; } }
     </style>
@@ -303,11 +306,11 @@ function buildHTML(
       </div>
       <div id="bar-main" class="bar-main">
         <a class="home" href="${homeHref}"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" /></a>
-        <a href="${prev}" class="nav-link">◀</a>
+        <a href="${prev}" class="nav-link prev"><svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <button onclick="flashHotspots()" style="background:none;border:1px solid #fff;border-radius:16px;padding:4px 12px;color:#fff;">
           ${count} ${word1} ${word2}
         </button>
-        <a href="${next}" class="nav-link">▶</a>
+        <a href="${next}" class="nav-link next"><svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <div class="made-by">made by <img src="${HAVAS_LOGO}" alt="Havas logo" /></div>
       </div>
     </div>
