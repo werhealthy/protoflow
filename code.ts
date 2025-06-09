@@ -7,7 +7,6 @@ declare const __html__: string;
 type Reaction = { action: { type: string; destinationId?: string } };
 
 figma.showUI(__html__, { width: 400, height: 590 });
-
 const HAVAS_LOGO =
 "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAMkElE" +
 "QVR4nO2deaxdRR3HP+ctUGgKlO3JpiBtkUUKaJAl0iK0RgVFAogRAYUQNATQEGQpyz+CMZAQCRFDqBgJ" +
@@ -48,7 +47,6 @@ const HAVAS_LOGO =
 "XXzWzCMeZIb6FRB9r+i0RMNtPVhGFfmWmt7o+S7pDkIr0KfBI4Vkdx0cJX8Bz7Uefi+Dme6PuASVh9od" +
 "6ZKfYk8pdXzZvj5t8XEl1WNk9lV/Ndf1B0Tdn2CIHx/k74x52eWGHn1azPY4U1nXZi4ck3LTTi8KaoTU" +
 "AFxR/pxyMYH0uAzXozvYllDZU+0E";
-
 function isValidReaction(r: any): boolean {
   return r.action && r.action.type === 'NODE' && r.action.destinationId;
 }
