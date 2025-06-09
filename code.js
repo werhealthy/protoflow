@@ -225,60 +225,41 @@ function buildHTML(imgPath, title, hotspots, prev, next, homeHref) {
 #c img{object-fit:contain;max-width:100%;max-height:100%;}
 .hs{position:absolute;display:block;background:transparent;cursor:pointer;z-index:2;}
 .pulse{position:absolute;background:#ffe;opacity:0.5;animation:fade 0.8s ease-out;z-index:1;}
-.bar{position:absolute;bottom:0;width:100vw;color:#fff;}
-.bar-main{height:56px;background:#2a2a2a;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:13px;}
-.bar-handle{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:40px;height:12px;background:#2a2a2a;border-radius:4px 4px 0 0;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.bar-handle span{transition:transform 0.2s;color:#fff;font-size:12px;}
-.bar-hidden .bar-main{display:none;}
-.bar-hidden .bar-handle span{transform:rotate(180deg);}
+.bar{position:absolute;bottom:0;height:56px;width:100vw;background:#2a2a2a;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:13px;}
 .bar .home img,.bar .arrows{filter:invert(19%) sepia(92%) saturate(6550%) hue-rotate(-10deg);height:18px;}
 @keyframes fade {0%{opacity:0.7;}100%{opacity:0;}}</style></head>
 <body>
 <div id="c"><img id="im" src="${imgPath}"/></div>
 ${hsDivs}
-<div id="bar" class="bar">
-  <div class="bar-handle" onclick="toggleBar()"><span id="toggle-arrow">▼</span></div>
-  <div id="bar-main" class="bar-main">
-    <a class="home" href="${homeHref}"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png"/></a>
-    <button onclick="flashHotspots()" style="background:none;border:1px solid #fff;border-radius:16px;padding:4px 12px;color:#fff;">
-    ${count} ${word1} ${word2}</button>
-    <div class="arrows"><a href="${prev}">◀</a> <a href="${next}">▶</a></div>
-  </div>
+<div class="bar">
+<a class="home" href="${homeHref}"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png"/></a>
+<button onclick="flashHotspots()" style="background:none;border:1px solid #fff;border-radius:16px;padding:4px 12px;color:#fff;">
+${count} ${word1} ${word2}</button>
+<div class="arrows"><a href="${prev}">◀</a> <a href="${next}">▶</a></div>
 </div>
 <script>
 var im=document.getElementById("im");
-var barVisible=true;var container=document.getElementById("c");
-function resizeContent(){
-  var vh=window.innerHeight-(barVisible?56:0),vw=window.innerWidth,
-  r=Math.min(vw/im.naturalWidth,vh/im.naturalHeight),imgW=im.naturalWidth*r,imgH=im.naturalHeight*r;
-  im.style.width=imgW+"px";im.style.height=imgH+"px";
-  var offsetX=(vw-imgW)/2,offsetY=(vh-imgH)/2,hs=document.getElementsByClassName("hs");
-  for(var i=0;i<hs.length;i++){
-    var d=hs[i];
-    d.style.left=parseFloat(d.dataset.x)*r+offsetX+"px";
-    d.style.top=parseFloat(d.dataset.y)*r+offsetY+"px";
-    d.style.width=parseFloat(d.dataset.w)*r+"px";
-    d.style.height=parseFloat(d.dataset.h)*r+"px";
-  }
-  container.style.height=vh+"px";
-}
-im.onload=resizeContent;window.onresize=resizeContent;
-function toggleBar(){
-  barVisible=!barVisible;
-  document.body.classList.toggle('bar-hidden',!barVisible);
-  resizeContent();
-}
+im.onload=function(){
+var vw=window.innerWidth,vh=window.innerHeight-56,r=Math.min(vw/im.naturalWidth,vh/im.naturalHeight),
+imgW=im.naturalWidth*r,imgH=im.naturalHeight*r;
+im.style.width=imgW+"px";im.style.height=imgH+"px";
+var offsetX=(vw-imgW)/2,offsetY=(vh-imgH)/2,hs=document.getElementsByClassName("hs");
+for(var i=0;i<hs.length;i++){
+var d=hs[i];
+d.style.left=parseFloat(d.dataset.x)*r+offsetX+"px";
+d.style.top=parseFloat(d.dataset.y)*r+offsetY+"px";
+d.style.width=parseFloat(d.dataset.w)*r+"px";
+d.style.height=parseFloat(d.dataset.h)*r+"px";}
+};
 function flashHotspots(){
-  var hs=document.getElementsByClassName("hs");
-  for(var i=0;i<hs.length;i++){
-    var d=hs[i];
-    var p=document.createElement("div");
-    p.className="pulse";
-    p.style.left=d.style.left;p.style.top=d.style.top;
-    p.style.width=d.style.width;p.style.height=d.style.height;
-    document.body.appendChild(p);
-    setTimeout(function(e){return function(){document.body.removeChild(e)}}(p),800);
-  }
-}
+var hs=document.getElementsByClassName("hs");
+for(var i=0;i<hs.length;i++){
+var d=hs[i];
+var p=document.createElement("div");
+p.className="pulse";
+p.style.left=d.style.left;p.style.top=d.style.top;
+p.style.width=d.style.width;p.style.height=d.style.height;
+document.body.appendChild(p);
+setTimeout(function(e){return function(){document.body.removeChild(e)}}(p),800);}}
 </script></body></html>`;
 }
