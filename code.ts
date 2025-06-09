@@ -47,7 +47,6 @@ const HAVAS_LOGO = "data:image/png;base64," + "iVBORw0KGgoAAAANSUhEUgAAAIAAAACAC
 "XXzWzCMeZIb6FRB9r+i0RMNtPVhGFfmWmt7o+S7pDkIr0KfBI4Vkdx0cJX8Bz7Uefi+Dme6PuASVh9od" +
 "6ZKfYk8pdXzZvj5t8XEl1WNk9lV/Ndf1B0Tdn2CIHx/k74x52eWGHn1azPY4U1nXZi4ck3LTTi8KaoTU" +
 "AFxR/pxyMYH0uAzXozvYllDZU+0E";
-
 function isValidReaction(r: any): boolean {
   return r.action && r.action.type === 'NODE' && r.action.destinationId;
 }
