@@ -208,6 +208,12 @@ function buildHTML(imgPath, title, hotspots, prev, next, homeHref) {
       .bar-handle svg { transition: transform 0.2s; color: #fff; }
       .bar-hidden .bar-main { display: none; }
       .bar-hidden .bar-handle svg { transform: rotate(180deg); }
+      .bar .home {                     /* <--- nuova regola */
+        position: absolute;
+        left: 24px;
+      }
+      .bar .home img { filter: invert(1); height: 18px; }
+
       .bar .home img { filter: invert(1); height: 18px; }
       .nav-link { color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; }
       .nav-link svg { transition: transform 0.2s; }
