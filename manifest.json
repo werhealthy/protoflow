@@ -1,6 +1,5 @@
 {
   "name": "ProtoFlow – Static Proto Export",
-  "id": "protoflow-static-export",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
