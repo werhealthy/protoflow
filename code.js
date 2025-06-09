@@ -221,7 +221,7 @@ function buildHTML(imgPath, title, hotspots, prev, next, homeHref) {
   return `
 <!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
 <style>*{margin:0;padding:0;box-sizing:border-box;}html,body{width:100vw;height:100vh;background:#000;font-family:sans-serif;color:#fff;overflow:hidden;}
-#c{position:absolute;top:0;left:0;display:flex;justify-content:center;align-items:center;width:100vw;height:calc(100vh - 56px);}
+#c{position:absolute;top:0;left:0;display:flex;justify-content:center;align-items:center;width:100vw;height:100vh;}
 #c img{object-fit:contain;max-width:100%;max-height:100%;}
 .hs{position:absolute;display:block;background:transparent;cursor:pointer;z-index:2;}
 .pulse{position:absolute;background:#ffe;opacity:0.5;animation:fade 0.8s ease-out;z-index:1;}
